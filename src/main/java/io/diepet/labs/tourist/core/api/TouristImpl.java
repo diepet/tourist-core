@@ -13,7 +13,7 @@ public class TouristImpl implements Tourist {
 
 	/* configurable fields */
 	private Set<TourEventListener> tourEventListenerSet;
-	private EditableCameraRollFactory editableCameraRollFactory;
+	private CameraRollFactory cameraRollFactory;
 
 	/* internal (not configurable) fields */
 	private ThreadLocal<Stack<Tour>> threadLocalTourStack = new ThreadLocal<Stack<Tour>>();
@@ -22,30 +22,36 @@ public class TouristImpl implements Tourist {
 	public Object aroundPointcut(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		final Stack<Tour> tourStack = getThreadLocalTourStack();
 		final ConfigurableCamera camera = getThreadLocalCamera();
-		final EditableCameraRoll cameraRoll = editableCameraRollFactory.createNewInstance();
-		final Tour tour = new Tour(proceedingJoinPoint);
+		final CameraRoll cameraRoll = cameraRollFactory.createNewInstance();
+		final TourImpl tour = new TourImpl(proceedingJoinPoint);
 		if (tourStack.isEmpty()) {
 			fireTourEvent(new TourEvent(TourEventType.TOURIST_TRAVEL_STARTED, tour));
 		}
 		tourStack.push(tour);
 		fireTourEvent(new TourEvent(TourEventType.TOUR_STARTED, tour));
 		Object returnObject;
+		CameraRoll previousCameraRoll = null;
 		try {
 			// set new camera roll and store the previous camera roll
-			final EditableCameraRoll previousCameraRoll = camera.replaceEditableCameraRoll(cameraRoll);
+			previousCameraRoll = camera.replaceCameraRoll(cameraRoll);
 			// join point proceed() call
 			returnObject = proceedingJoinPoint.proceed();
-			// resume camera roll if changed after proceed()
-			camera.replaceEditableCameraRoll(previousCameraRoll);
-			tour.setResult(returnObject);
-			tour.setCameraRoll(cameraRoll);
-			tourStack.pop();
-			fireTourEvent(new TourEvent(TourEventType.TOUR_ENDED, tour));
 		} catch (Throwable e) {
 			tour.setFailCause(e);
 			fireTourEvent(new TourEvent(TourEventType.TOURIST_TRAVEL_ENDED, tour));
 			throw e;
+		} finally {
+			// resume camera roll if changed after proceed()
+			camera.replaceCameraRoll(previousCameraRoll);
 		}
+		// set result and camera roll
+		tour.setResult(returnObject);
+		tour.setCameraRoll(cameraRoll);
+		lockCameraRoll(cameraRoll);
+		// pop tour and fire related event
+		tourStack.pop();
+		fireTourEvent(new TourEvent(TourEventType.TOUR_ENDED, tour));
+
 		if (tourStack.isEmpty()) {
 			fireTourEvent(new TourEvent(TourEventType.TOURIST_TRAVEL_ENDED, tour));
 		}
@@ -81,12 +87,18 @@ public class TouristImpl implements Tourist {
 		return camera;
 	}
 
+	private void lockCameraRoll(CameraRoll cameraRoll) {
+		if (cameraRoll instanceof Lockable) {
+			((Lockable) cameraRoll).lock();
+		}
+	}
+
 	public void setTourEventListenerSet(Set<TourEventListener> tourEventListenerSet) {
 		this.tourEventListenerSet = tourEventListenerSet;
 	}
 
-	public void setCameraRollFactory(EditableCameraRollFactory editableCameraRollFactory) {
-		this.editableCameraRollFactory = editableCameraRollFactory;
+	public void setCameraRollFactory(CameraRollFactory cameraRollFactory) {
+		this.cameraRollFactory = cameraRollFactory;
 	}
 
 }

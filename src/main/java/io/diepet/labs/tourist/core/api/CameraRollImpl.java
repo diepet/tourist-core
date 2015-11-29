@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-class EditableCameraRollImpl implements EditableCameraRoll {
+class CameraRollImpl implements CameraRoll {
 
 	private List<Shot> shotList = new LinkedList<Shot>();
 
-	EditableCameraRollImpl() {
+	CameraRollImpl() {
 		super();
 	}
 

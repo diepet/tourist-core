@@ -5,7 +5,7 @@ import io.diepet.labs.tourist.core.api.Tour;
 abstract public class TourEventListenerAdapter implements TourEventListener {
 
 	@Override
-	public void onTourEvent(TourEvent tourEvent) {
+	final public void onTourEvent(TourEvent tourEvent) {
 		switch (tourEvent.getTourEventType()) {
 
 		case TOURIST_TRAVEL_STARTED:

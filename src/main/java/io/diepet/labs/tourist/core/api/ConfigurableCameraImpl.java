@@ -1,8 +1,8 @@
 package io.diepet.labs.tourist.core.api;
 
-class ConfigurableCameraImpl implements ConfigurableCamera {
+final class ConfigurableCameraImpl implements ConfigurableCamera {
 
-	private EditableCameraRoll editableCameraRoll;
+	private CameraRoll cameraRoll;
 
 	ConfigurableCameraImpl() {
 		super();
@@ -11,21 +11,21 @@ class ConfigurableCameraImpl implements ConfigurableCamera {
 	@Override
 	public boolean shot(String picture) {
 		boolean result = false;
-		if (editableCameraRoll != null) {
-			result = editableCameraRoll.addShot(new Shot(picture));
+		if (cameraRoll != null) {
+			result = cameraRoll.addShot(new ShotImpl(picture));
 		}
 		return result;
 	}
 
 	@Override
-	public EditableCameraRoll replaceEditableCameraRoll(EditableCameraRoll editableCameraRoll) {
-		EditableCameraRoll previousEditableCameraRoll = this.editableCameraRoll;
-		this.editableCameraRoll = editableCameraRoll;
-		return previousEditableCameraRoll;
+	public CameraRoll replaceCameraRoll(CameraRoll cameraRoll) {
+		CameraRoll previousCameraRoll = this.cameraRoll;
+		this.cameraRoll = cameraRoll;
+		return previousCameraRoll;
 	}
 
 	@Override
 	public boolean isOn() {
-		return this.editableCameraRoll != null;
+		return this.cameraRoll != null;
 	}
 }

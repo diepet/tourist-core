@@ -2,43 +2,13 @@ package io.diepet.labs.tourist.core.api;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 
-public class Tour {
+public interface Tour {
 
-	private ProceedingJoinPoint proceedingJoinPoint;
-	private Object result;
-	private Throwable failCause;
-	private CameraRoll cameraRoll;
+	public ProceedingJoinPoint getProceedingJoinPoint();
 
-	Tour(ProceedingJoinPoint proceedingJoinPoint) {
-		super();
-		this.proceedingJoinPoint = proceedingJoinPoint;
-	}
+	public Object getResult();
 
-	public ProceedingJoinPoint getProceedingJoinPoint() {
-		return proceedingJoinPoint;
-	}
+	public Throwable getFailCause();
 
-	public Object getResult() {
-		return result;
-	}
-
-	void setResult(Object result) {
-		this.result = result;
-	}
-
-	public Throwable getFailCause() {
-		return failCause;
-	}
-
-	void setFailCause(Throwable failCause) {
-		this.failCause = failCause;
-	}
-
-	public CameraRoll getCameraRoll() {
-		return cameraRoll;
-	}
-
-	void setCameraRoll(CameraRoll cameraRoll) {
-		this.cameraRoll = cameraRoll;
-	}
+	public CameraRoll getCameraRoll();
 }

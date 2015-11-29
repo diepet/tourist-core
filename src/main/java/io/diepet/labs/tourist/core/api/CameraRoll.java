@@ -6,4 +6,6 @@ public interface CameraRoll {
 
 	List<Shot> getShotList();
 
+	boolean addShot(Shot shot);
+
 }
