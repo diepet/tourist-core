@@ -1,13 +1,10 @@
-package io.diepet.labs.tourist.core.impl;
+package io.diepet.labs.tourist.core.api;
 
 import java.util.Set;
 import java.util.Stack;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 
-import io.diepet.labs.tourist.core.api.Tour;
-import io.diepet.labs.tourist.core.api.TourFactory;
-import io.diepet.labs.tourist.core.api.Tourist;
 import io.diepet.labs.tourist.core.event.TourEvent;
 import io.diepet.labs.tourist.core.event.TourEventListener;
 import io.diepet.labs.tourist.core.event.TourEventType;
@@ -15,15 +12,18 @@ import io.diepet.labs.tourist.core.event.TourEventType;
 public class TouristImpl implements Tourist {
 
 	/* configurable fields */
-	private TourFactory tourFactory;
 	private Set<TourEventListener> tourEventListenerSet;
+	private EditableCameraRollFactory editableCameraRollFactory;
 
 	/* internal (not configurable) fields */
 	private ThreadLocal<Stack<Tour>> threadLocalTourStack = new ThreadLocal<Stack<Tour>>();
+	private ThreadLocal<ConfigurableCamera> threadLocalCamera = new ThreadLocal<ConfigurableCamera>();
 
 	public Object aroundPointcut(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		final Stack<Tour> tourStack = getThreadLocalTourStack();
-		final Tour tour = tourFactory.createNewInstance(proceedingJoinPoint);
+		final ConfigurableCamera camera = getThreadLocalCamera();
+		final EditableCameraRoll cameraRoll = editableCameraRollFactory.createNewInstance();
+		final Tour tour = new Tour(proceedingJoinPoint);
 		if (tourStack.isEmpty()) {
 			fireTourEvent(new TourEvent(TourEventType.TOURIST_TRAVEL_STARTED, tour));
 		}
@@ -31,8 +31,14 @@ public class TouristImpl implements Tourist {
 		fireTourEvent(new TourEvent(TourEventType.TOUR_STARTED, tour));
 		Object returnObject;
 		try {
+			// set new camera roll and store the previous camera roll
+			final EditableCameraRoll previousCameraRoll = camera.replaceEditableCameraRoll(cameraRoll);
+			// join point proceed() call
 			returnObject = proceedingJoinPoint.proceed();
+			// resume camera roll if changed after proceed()
+			camera.replaceEditableCameraRoll(previousCameraRoll);
 			tour.setResult(returnObject);
+			tour.setCameraRoll(cameraRoll);
 			tourStack.pop();
 			fireTourEvent(new TourEvent(TourEventType.TOUR_ENDED, tour));
 		} catch (Throwable e) {
@@ -44,6 +50,11 @@ public class TouristImpl implements Tourist {
 			fireTourEvent(new TourEvent(TourEventType.TOURIST_TRAVEL_ENDED, tour));
 		}
 		return returnObject;
+	}
+
+	@Override
+	public Camera getCamera() {
+		return getThreadLocalCamera();
 	}
 
 	private void fireTourEvent(TourEvent tourEvent) {
@@ -61,11 +72,21 @@ public class TouristImpl implements Tourist {
 		return stack;
 	}
 
-	public void setTourFactory(TourFactory tourFactory) {
-		this.tourFactory = tourFactory;
+	private ConfigurableCamera getThreadLocalCamera() {
+		ConfigurableCamera camera = threadLocalCamera.get();
+		if (camera == null) {
+			camera = new ConfigurableCameraImpl();
+			threadLocalCamera.set(camera);
+		}
+		return camera;
 	}
 
 	public void setTourEventListenerSet(Set<TourEventListener> tourEventListenerSet) {
 		this.tourEventListenerSet = tourEventListenerSet;
 	}
+
+	public void setCameraRollFactory(EditableCameraRollFactory editableCameraRollFactory) {
+		this.editableCameraRollFactory = editableCameraRollFactory;
+	}
+
 }

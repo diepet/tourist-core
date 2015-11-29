@@ -1,18 +1,15 @@
 package io.diepet.labs.tourist.core.api;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 
-abstract public class Tour {
+public class Tour {
 
 	private ProceedingJoinPoint proceedingJoinPoint;
 	private Object result;
 	private Throwable failCause;
-	private Map<String, BigDecimal> shotMap;
+	private CameraRoll cameraRoll;
 
-	public Tour(ProceedingJoinPoint proceedingJoinPoint) {
+	Tour(ProceedingJoinPoint proceedingJoinPoint) {
 		super();
 		this.proceedingJoinPoint = proceedingJoinPoint;
 	}
@@ -25,27 +22,23 @@ abstract public class Tour {
 		return result;
 	}
 
-	public void setResult(Object result) {
+	void setResult(Object result) {
 		this.result = result;
-	}
-
-	public Map<String, BigDecimal> getShotMap() {
-		return shotMap;
-	}
-
-	public void setShotMap(Map<String, BigDecimal> shotMap) {
-		this.shotMap = shotMap;
 	}
 
 	public Throwable getFailCause() {
 		return failCause;
 	}
 
-	public void setFailCause(Throwable failCause) {
+	void setFailCause(Throwable failCause) {
 		this.failCause = failCause;
 	}
 
-	abstract protected Map<String, BigDecimal> createShotMap();
+	public CameraRoll getCameraRoll() {
+		return cameraRoll;
+	}
 
-	abstract public BigDecimal getShotDefaultValue(String shotName);
+	void setCameraRoll(CameraRoll cameraRoll) {
+		this.cameraRoll = cameraRoll;
+	}
 }

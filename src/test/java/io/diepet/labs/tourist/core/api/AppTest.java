@@ -1,4 +1,4 @@
-package io.diepet.labs.tourist.api;
+package io.diepet.labs.tourist.core.api;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
