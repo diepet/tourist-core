@@ -29,31 +29,41 @@ public class TouristImpl implements Tourist {
 		}
 		tourStack.push(tour);
 		fireTourEvent(new TourEvent(TourEventType.TOUR_STARTED, tour));
-		Object returnObject;
-		CameraRoll previousCameraRoll = null;
+		Object returnObject = null;
+		// set new camera roll and store the previous camera roll
+		CameraRoll previousCameraRoll = camera.replaceCameraRoll(cameraRoll);
+		Throwable error = null;
 		try {
-			// set new camera roll and store the previous camera roll
-			previousCameraRoll = camera.replaceCameraRoll(cameraRoll);
 			// join point proceed() call
 			returnObject = proceedingJoinPoint.proceed();
-		} catch (Throwable e) {
-			tour.setFailCause(e);
-			fireTourEvent(new TourEvent(TourEventType.TOURIST_TRAVEL_ENDED, tour));
-			throw e;
+		} catch (Throwable exceptionCaught) {
+			error = exceptionCaught;
 		} finally {
 			// resume camera roll if changed after proceed()
 			camera.replaceCameraRoll(previousCameraRoll);
 		}
-		// set result and camera roll
-		tour.setResult(returnObject);
-		tour.setCameraRoll(cameraRoll);
-		lockCameraRoll(cameraRoll);
+
+		if (error != null) {
+			// if some exception was thrown by proceed()
+			// set fail cause
+			tour.setFailCause(error);
+			fireTourEvent(new TourEvent(TourEventType.TOUR_FAILED, tour));
+		} else {
+			// if proceed() was completed without exception thrown
+			// set result and camera roll
+			tour.setResult(returnObject);
+			tour.setCameraRoll(cameraRoll);
+			lockCameraRoll(cameraRoll);
+			fireTourEvent(new TourEvent(TourEventType.TOUR_ENDED, tour));
+		}
 		// pop tour and fire related event
 		tourStack.pop();
-		fireTourEvent(new TourEvent(TourEventType.TOUR_ENDED, tour));
 
 		if (tourStack.isEmpty()) {
 			fireTourEvent(new TourEvent(TourEventType.TOURIST_TRAVEL_ENDED, tour));
+		}
+		if (error != null) {
+			throw error;
 		}
 		return returnObject;
 	}
