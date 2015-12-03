@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * The default implementation of {@link CameraRoll}.
  */
-class CameraRollImpl implements CameraRoll {
+class CameraRollImpl implements CameraRoll, Lockable {
 
 	/** The shot list. */
 	private List<Shot> shotList = new LinkedList<Shot>();
@@ -39,5 +39,15 @@ class CameraRollImpl implements CameraRoll {
 	@Override
 	public boolean addShot(final Shot shot) {
 		return this.shotList.add(shot);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.diepet.labs.tourist.core.api.Lockable#lock()
+	 */
+	@Override
+	public final void lock() {
+		this.shotList = Collections.unmodifiableList(shotList);
 	}
 }

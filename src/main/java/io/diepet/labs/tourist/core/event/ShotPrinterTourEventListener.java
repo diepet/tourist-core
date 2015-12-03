@@ -58,6 +58,7 @@ public final class ShotPrinterTourEventListener extends TourEventListenerAdapter
 	 */
 	@Override
 	public void onTouristTravelStarted(final Tour tour) {
+		super.onTouristTravelStarted(tour);
 		final StringBuilder buffer = new StringBuilder();
 		this.threadLocalStringBuilder.set(buffer);
 		this.threadLocalStackLevel.set(Integer.valueOf(0));
@@ -73,6 +74,7 @@ public final class ShotPrinterTourEventListener extends TourEventListenerAdapter
 	 */
 	@Override
 	public void onTourStarted(final Tour tour) {
+		super.onTourStarted(tour);
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
 		final int stackLevel = this.threadLocalStackLevel.get().intValue();
 		final String methodName = tour.getProceedingJoinPoint().getSignature().getName();
@@ -90,6 +92,7 @@ public final class ShotPrinterTourEventListener extends TourEventListenerAdapter
 	 */
 	@Override
 	public void onTourEnded(final Tour tour) {
+		super.onTourEnded(tour);
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
 		final int stackLevel = this.threadLocalStackLevel.get().intValue();
 		final CameraRoll cameraRoll = tour.getCameraRoll();
@@ -110,6 +113,7 @@ public final class ShotPrinterTourEventListener extends TourEventListenerAdapter
 	 */
 	@Override
 	public void onTourFailed(final Tour tour) {
+		super.onTourFailed(tour);
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
 		final int stackLevel = this.threadLocalStackLevel.get().intValue();
 		repeatString(buffer, TAB, stackLevel);
@@ -125,6 +129,7 @@ public final class ShotPrinterTourEventListener extends TourEventListenerAdapter
 	 */
 	@Override
 	public void onTouristTravelEnded(final Tour tour) {
+		super.onTouristTravelEnded(tour);
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
 		this.threadLocalStringBuilder.remove();
 		this.threadLocalStackLevel.remove();
