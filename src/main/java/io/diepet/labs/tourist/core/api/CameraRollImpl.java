@@ -37,7 +37,7 @@ class CameraRollImpl implements CameraRoll {
 	 * .core.api.Shot)
 	 */
 	@Override
-	public boolean addShot(Shot shot) {
+	public boolean addShot(final Shot shot) {
 		return this.shotList.add(shot);
 	}
 }

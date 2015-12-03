@@ -5,11 +5,11 @@ import io.diepet.labs.tourist.core.api.Tour;
 /**
  * The Class TourEvent.
  */
-final public class TourEvent {
+public final class TourEvent {
 
 	/** The tour event type. */
 	private TourEventType tourEventType;
-	
+
 	/** The tour. */
 	private Tour tour;
 
@@ -21,7 +21,7 @@ final public class TourEvent {
 	 * @param tour
 	 *            the tour
 	 */
-	public TourEvent(TourEventType tourEventType, Tour tour) {
+	public TourEvent(final TourEventType tourEventType, final Tour tour) {
 		this.tourEventType = tourEventType;
 		this.tour = tour;
 	}

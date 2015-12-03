@@ -12,26 +12,26 @@ public interface Tour {
 	 *
 	 * @return the proceeding join point
 	 */
-	public ProceedingJoinPoint getProceedingJoinPoint();
+	ProceedingJoinPoint getProceedingJoinPoint();
 
 	/**
 	 * Gets the result.
 	 *
 	 * @return the result
 	 */
-	public Object getResult();
+	Object getResult();
 
 	/**
 	 * Gets the fail cause.
 	 *
 	 * @return the fail cause
 	 */
-	public Throwable getFailCause();
+	Throwable getFailCause();
 
 	/**
 	 * Gets the camera roll.
 	 *
 	 * @return the camera roll
 	 */
-	public CameraRoll getCameraRoll();
+	CameraRoll getCameraRoll();
 }

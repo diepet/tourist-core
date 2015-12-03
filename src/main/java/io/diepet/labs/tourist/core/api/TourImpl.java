@@ -25,7 +25,7 @@ final class TourImpl implements Tour {
 	 * @param proceedingJoinPoint
 	 *            the proceeding join point
 	 */
-	TourImpl(ProceedingJoinPoint proceedingJoinPoint) {
+	TourImpl(final ProceedingJoinPoint proceedingJoinPoint) {
 		super();
 		this.proceedingJoinPoint = proceedingJoinPoint;
 	}
@@ -35,6 +35,7 @@ final class TourImpl implements Tour {
 	 * 
 	 * @see io.diepet.labs.tourist.core.api.Tour#getProceedingJoinPoint()
 	 */
+	@Override
 	public ProceedingJoinPoint getProceedingJoinPoint() {
 		return proceedingJoinPoint;
 	}
@@ -44,6 +45,7 @@ final class TourImpl implements Tour {
 	 * 
 	 * @see io.diepet.labs.tourist.core.api.Tour#getResult()
 	 */
+	@Override
 	public Object getResult() {
 		return result;
 	}
@@ -54,7 +56,7 @@ final class TourImpl implements Tour {
 	 * @param result
 	 *            the new result
 	 */
-	void setResult(Object result) {
+	void setResult(final Object result) {
 		this.result = result;
 	}
 
@@ -63,6 +65,7 @@ final class TourImpl implements Tour {
 	 * 
 	 * @see io.diepet.labs.tourist.core.api.Tour#getFailCause()
 	 */
+	@Override
 	public Throwable getFailCause() {
 		return failCause;
 	}
@@ -73,7 +76,7 @@ final class TourImpl implements Tour {
 	 * @param failCause
 	 *            the new fail cause
 	 */
-	void setFailCause(Throwable failCause) {
+	void setFailCause(final Throwable failCause) {
 		this.failCause = failCause;
 	}
 
@@ -82,6 +85,7 @@ final class TourImpl implements Tour {
 	 * 
 	 * @see io.diepet.labs.tourist.core.api.Tour#getCameraRoll()
 	 */
+	@Override
 	public CameraRoll getCameraRoll() {
 		return cameraRoll;
 	}
@@ -92,7 +96,7 @@ final class TourImpl implements Tour {
 	 * @param cameraRoll
 	 *            the new camera roll
 	 */
-	void setCameraRoll(CameraRoll cameraRoll) {
+	void setCameraRoll(final CameraRoll cameraRoll) {
 		this.cameraRoll = cameraRoll;
 	}
 }

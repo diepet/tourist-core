@@ -14,7 +14,7 @@ import io.diepet.labs.tourist.core.api.Tour;
  * {@link TourEventType#TOURIST_TRAVEL_ENDED} event will trigger the
  * {@link #onTouristTravelStarted(Tour)} method.
  */
-abstract public class TourEventListenerAdapter implements TourEventListener {
+public abstract class TourEventListenerAdapter implements TourEventListener {
 
 	/*
 	 * (non-Javadoc)
@@ -24,7 +24,7 @@ abstract public class TourEventListenerAdapter implements TourEventListener {
 	 * .labs.tourist.core.event.TourEvent)
 	 */
 	@Override
-	final public void onTourEvent(TourEvent tourEvent) {
+	public final void onTourEvent(final TourEvent tourEvent) {
 		switch (tourEvent.getTourEventType()) {
 
 		case TOURIST_TRAVEL_STARTED:
@@ -46,7 +46,7 @@ abstract public class TourEventListenerAdapter implements TourEventListener {
 		case TOUR_FAILED:
 			this.onTourFailed(tourEvent.getTour());
 			break;
-
+		default:
 		}
 	}
 
@@ -56,7 +56,7 @@ abstract public class TourEventListenerAdapter implements TourEventListener {
 	 * @param tour
 	 *            the tour
 	 */
-	public void onTouristTravelStarted(Tour tour) {
+	public void onTouristTravelStarted(final Tour tour) {
 		// empty implementation
 	}
 
@@ -66,7 +66,7 @@ abstract public class TourEventListenerAdapter implements TourEventListener {
 	 * @param tour
 	 *            the tour
 	 */
-	public void onTourStarted(Tour tour) {
+	public void onTourStarted(final Tour tour) {
 		// empty implementation
 	}
 
@@ -76,7 +76,7 @@ abstract public class TourEventListenerAdapter implements TourEventListener {
 	 * @param tour
 	 *            the tour
 	 */
-	public void onTourEnded(Tour tour) {
+	public void onTourEnded(final Tour tour) {
 		// empty implementation
 	}
 
@@ -86,7 +86,7 @@ abstract public class TourEventListenerAdapter implements TourEventListener {
 	 * @param tour
 	 *            the tour
 	 */
-	public void onTouristTravelEnded(Tour tour) {
+	public void onTouristTravelEnded(final Tour tour) {
 		// empty implementation
 	}
 
@@ -96,7 +96,7 @@ abstract public class TourEventListenerAdapter implements TourEventListener {
 	 * @param tour
 	 *            the tour
 	 */
-	public void onTourFailed(Tour tour) {
+	public void onTourFailed(final Tour tour) {
 		// empty implementation
 	}
 }

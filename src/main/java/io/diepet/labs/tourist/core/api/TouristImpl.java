@@ -35,7 +35,7 @@ public class TouristImpl implements Tourist {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public Object aroundPointcut(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+	public final Object aroundPointcut(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		final Stack<Tour> tourStack = getThreadLocalTourStack();
 		final ConfigurableCamera camera = getThreadLocalCamera();
 		final CameraRoll cameraRoll = cameraRollFactory.createNewInstance();
@@ -90,7 +90,7 @@ public class TouristImpl implements Tourist {
 	 * @see io.diepet.labs.tourist.core.api.Tourist#getCamera()
 	 */
 	@Override
-	public Camera getCamera() {
+	public final Camera getCamera() {
 		return getThreadLocalCamera();
 	}
 
@@ -100,7 +100,7 @@ public class TouristImpl implements Tourist {
 	 * @param tourEvent
 	 *            the tour event
 	 */
-	private void fireTourEvent(TourEvent tourEvent) {
+	private void fireTourEvent(final TourEvent tourEvent) {
 		for (TourEventListener tourEventListener : tourEventListenerSet) {
 			tourEventListener.onTourEvent(tourEvent);
 		}
@@ -140,7 +140,7 @@ public class TouristImpl implements Tourist {
 	 * @param cameraRoll
 	 *            the camera roll
 	 */
-	private void lockCameraRoll(CameraRoll cameraRoll) {
+	private void lockCameraRoll(final CameraRoll cameraRoll) {
 		if (cameraRoll instanceof Lockable) {
 			((Lockable) cameraRoll).lock();
 		}
@@ -152,7 +152,7 @@ public class TouristImpl implements Tourist {
 	 * @param tourEventListenerSet
 	 *            the new tour event listener set
 	 */
-	public void setTourEventListenerSet(Set<TourEventListener> tourEventListenerSet) {
+	public final void setTourEventListenerSet(final Set<TourEventListener> tourEventListenerSet) {
 		this.tourEventListenerSet = tourEventListenerSet;
 	}
 
@@ -162,7 +162,7 @@ public class TouristImpl implements Tourist {
 	 * @param cameraRollFactory
 	 *            the new camera roll factory
 	 */
-	public void setCameraRollFactory(CameraRollFactory cameraRollFactory) {
+	public final void setCameraRollFactory(final CameraRollFactory cameraRollFactory) {
 		this.cameraRollFactory = cameraRollFactory;
 	}
 

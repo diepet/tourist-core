@@ -21,7 +21,7 @@ final class ConfigurableCameraImpl implements ConfigurableCamera {
 	 * @see io.diepet.labs.tourist.core.api.Camera#shot(java.lang.String)
 	 */
 	@Override
-	public boolean shot(String picture) {
+	public boolean shot(final String picture) {
 		boolean result = false;
 		if (cameraRoll != null) {
 			result = cameraRoll.addShot(new ShotImpl(picture));
@@ -37,9 +37,9 @@ final class ConfigurableCameraImpl implements ConfigurableCamera {
 	 * diepet.labs.tourist.core.api.CameraRoll)
 	 */
 	@Override
-	public CameraRoll replaceCameraRoll(CameraRoll cameraRoll) {
+	public CameraRoll replaceCameraRoll(final CameraRoll newCameraRoll) {
 		CameraRoll previousCameraRoll = this.cameraRoll;
-		this.cameraRoll = cameraRoll;
+		this.cameraRoll = newCameraRoll;
 		return previousCameraRoll;
 	}
 

@@ -11,7 +11,7 @@ import io.diepet.labs.tourist.core.api.Tour;
  * A sample of a {@link TourEventListenerAdapter} instantiation. The tour events
  * will be written in an {@link java.io.OutputStream}.
  */
-public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
+public final class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 
 	/** The Constant TRAVEL_START_TAG_FORMAT. */
 	public static final String TRAVEL_START_TAG_FORMAT = "-- START TRAVEL --%n";
@@ -32,13 +32,13 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 	public static final String EXCEPTION_THROWN_FORMAT = "EXCEPTION THROWN: %s%n";
 
 	/** The output stream. */
-	final private OutputStream outputStream;
+	private final OutputStream outputStream;
 
 	/** The thread local string builder. */
-	final private ThreadLocal<StringBuilder> threadLocalStringBuilder = new ThreadLocal<StringBuilder>();
+	private final ThreadLocal<StringBuilder> threadLocalStringBuilder = new ThreadLocal<StringBuilder>();
 
 	/** The thread local stack level. */
-	final private ThreadLocal<Integer> threadLocalStackLevel = new ThreadLocal<Integer>();
+	private final ThreadLocal<Integer> threadLocalStackLevel = new ThreadLocal<Integer>();
 
 	/**
 	 * Instantiates a new shot printer tour event listener.
@@ -109,7 +109,7 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 	 * io.diepet.labs.tourist.core.api.Tour)
 	 */
 	@Override
-	public void onTourFailed(Tour tour) {
+	public void onTourFailed(final Tour tour) {
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
 		final int stackLevel = this.threadLocalStackLevel.get().intValue();
 		repeatString(buffer, TAB, stackLevel);
@@ -124,7 +124,7 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 	 * onTouristTravelEnded(io.diepet.labs.tourist.core.api.Tour)
 	 */
 	@Override
-	public void onTouristTravelEnded(Tour tour) {
+	public void onTouristTravelEnded(final Tour tour) {
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
 		this.threadLocalStringBuilder.remove();
 		this.threadLocalStackLevel.remove();
@@ -138,7 +138,7 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 	 * @param buffer
 	 *            the buffer
 	 */
-	synchronized private void flushBufferToOutputStream(final StringBuilder buffer) {
+	private synchronized void flushBufferToOutputStream(final StringBuilder buffer) {
 		try {
 			outputStream.write(buffer.toString().getBytes());
 			outputStream.flush();
@@ -157,7 +157,7 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 	 * @param n
 	 *            how many times the string will be repeated
 	 */
-	private void repeatString(final StringBuilder buffer, String s, int n) {
+	private void repeatString(final StringBuilder buffer, final String s, final int n) {
 		for (int i = 0; i < n; i++) {
 			buffer.append(s);
 		}

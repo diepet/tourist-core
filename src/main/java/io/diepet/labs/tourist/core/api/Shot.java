@@ -10,13 +10,13 @@ public interface Shot {
 	 *
 	 * @return the picture
 	 */
-	public String getPicture();
+	String getPicture();
 
 	/**
 	 * Gets the timestamp of the shot.
 	 *
 	 * @return the timestamp
 	 */
-	public long getTimestamp();
+	long getTimestamp();
 
 }
