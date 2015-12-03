@@ -64,7 +64,6 @@ public class ShotPrinterTourEventListenerTests {
 
 	@Test
 	public void testSingleDummyMethod() {
-		initMocks();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ShotPrinterTourEventListener shotPrinterTourEventListener = new ShotPrinterTourEventListener(baos);
 		shotPrinterTourEventListener.onTouristTravelStarted(this.tourDummyMethod);
@@ -82,7 +81,6 @@ public class ShotPrinterTourEventListenerTests {
 
 	@Test
 	public void testFailedSingleDummyMethod() {
-		initMocks();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ShotPrinterTourEventListener shotPrinterTourEventListener = new ShotPrinterTourEventListener(baos);
 		shotPrinterTourEventListener.onTouristTravelStarted(this.tourDummyMethod);
@@ -99,7 +97,6 @@ public class ShotPrinterTourEventListenerTests {
 
 	@Test
 	public void testInnerDummyMethod() {
-		initMocks();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ShotPrinterTourEventListener shotPrinterTourEventListener = new ShotPrinterTourEventListener(baos);
 		shotPrinterTourEventListener.onTouristTravelStarted(this.tourDummyMethod);
@@ -121,7 +118,6 @@ public class ShotPrinterTourEventListenerTests {
 
 	@Test
 	public void testFailedInnerDummyMethod() {
-		initMocks();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ShotPrinterTourEventListener shotPrinterTourEventListener = new ShotPrinterTourEventListener(baos);
 		shotPrinterTourEventListener.onTouristTravelStarted(this.tourDummyMethod);
@@ -179,11 +175,4 @@ public class ShotPrinterTourEventListenerTests {
 				this.tourInnerDummyMethod, this.cameraRollInnerDummyMethod, this.firstShot, this.secondShot,
 				this.thirdShot);
 	}
-	/*
-	 * proceedingJoinPointDummyMethod, signatureDummyMethod, tourDummyMethod,
-	 * cameraRollDummyMethod, proceedingJoinPointInnerDummyMethod,
-	 * signatureInnerDummyMethod, firstShot, secondShot, thirdShot
-	 * 
-	 * @Mock private Shot thirdShot;
-	 */
 }
