@@ -20,7 +20,7 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 
 	final private ThreadLocal<StringBuilder> threadLocalStringBuilder = new ThreadLocal<StringBuilder>();
 
-	final private ThreadLocal<Integer> threadLocalStackLevel = new ThreadLocal<>();
+	final private ThreadLocal<Integer> threadLocalStackLevel = new ThreadLocal<Integer>();
 
 	public ShotPrinterTourEventListener(final OutputStream outputStream) {
 		this.outputStream = outputStream;
