@@ -9,16 +9,32 @@ import io.diepet.labs.tourist.core.event.TourEvent;
 import io.diepet.labs.tourist.core.event.TourEventListener;
 import io.diepet.labs.tourist.core.event.TourEventType;
 
+/**
+ * The default implementation of {@link Tourist} interface.
+ */
 public class TouristImpl implements Tourist {
 
-	/* configurable fields */
+	/** The tour event listener set. */
 	private Set<TourEventListener> tourEventListenerSet;
+
+	/** The camera roll factory. */
 	private CameraRollFactory cameraRollFactory;
 
-	/* internal (not configurable) fields */
+	/** The thread local tour stack. */
 	private ThreadLocal<Stack<Tour>> threadLocalTourStack = new ThreadLocal<Stack<Tour>>();
+
+	/** The thread local camera. */
 	private ThreadLocal<ConfigurableCamera> threadLocalCamera = new ThreadLocal<ConfigurableCamera>();
 
+	/**
+	 * Around pointcut.
+	 *
+	 * @param proceedingJoinPoint
+	 *            the proceeding join point
+	 * @return the object
+	 * @throws Throwable
+	 *             the throwable
+	 */
 	public Object aroundPointcut(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		final Stack<Tour> tourStack = getThreadLocalTourStack();
 		final ConfigurableCamera camera = getThreadLocalCamera();
@@ -68,17 +84,33 @@ public class TouristImpl implements Tourist {
 		return returnObject;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.diepet.labs.tourist.core.api.Tourist#getCamera()
+	 */
 	@Override
 	public Camera getCamera() {
 		return getThreadLocalCamera();
 	}
 
+	/**
+	 * Fire tour event.
+	 *
+	 * @param tourEvent
+	 *            the tour event
+	 */
 	private void fireTourEvent(TourEvent tourEvent) {
 		for (TourEventListener tourEventListener : tourEventListenerSet) {
 			tourEventListener.onTourEvent(tourEvent);
 		}
 	}
 
+	/**
+	 * Gets the thread local tour stack.
+	 *
+	 * @return the thread local tour stack
+	 */
 	private Stack<Tour> getThreadLocalTourStack() {
 		Stack<Tour> stack = threadLocalTourStack.get();
 		if (stack == null) {
@@ -88,6 +120,11 @@ public class TouristImpl implements Tourist {
 		return stack;
 	}
 
+	/**
+	 * Gets the thread local camera.
+	 *
+	 * @return the thread local camera
+	 */
 	private ConfigurableCamera getThreadLocalCamera() {
 		ConfigurableCamera camera = threadLocalCamera.get();
 		if (camera == null) {
@@ -97,16 +134,34 @@ public class TouristImpl implements Tourist {
 		return camera;
 	}
 
+	/**
+	 * Lock camera roll.
+	 *
+	 * @param cameraRoll
+	 *            the camera roll
+	 */
 	private void lockCameraRoll(CameraRoll cameraRoll) {
 		if (cameraRoll instanceof Lockable) {
 			((Lockable) cameraRoll).lock();
 		}
 	}
 
+	/**
+	 * Sets the tour event listener set.
+	 *
+	 * @param tourEventListenerSet
+	 *            the new tour event listener set
+	 */
 	public void setTourEventListenerSet(Set<TourEventListener> tourEventListenerSet) {
 		this.tourEventListenerSet = tourEventListenerSet;
 	}
 
+	/**
+	 * Sets the camera roll factory.
+	 *
+	 * @param cameraRollFactory
+	 *            the new camera roll factory
+	 */
 	public void setCameraRollFactory(CameraRollFactory cameraRollFactory) {
 		this.cameraRollFactory = cameraRollFactory;
 	}

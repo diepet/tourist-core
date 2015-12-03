@@ -7,25 +7,55 @@ import io.diepet.labs.tourist.core.api.CameraRoll;
 import io.diepet.labs.tourist.core.api.Shot;
 import io.diepet.labs.tourist.core.api.Tour;
 
+/**
+ * A sample of a {@link TourEventListenerAdapter} instantiation. The tour events
+ * will be written in an {@link java.io.OutputStream}.
+ */
 public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 
+	/** The Constant TRAVEL_START_TAG_FORMAT. */
 	public static final String TRAVEL_START_TAG_FORMAT = "-- START TRAVEL --%n";
+
+	/** The Constant TRAVEL_END_TAG_FORMAT. */
 	public static final String TRAVEL_END_TAG_FORMAT = "-- END TRAVEL --%n";
+
+	/** The Constant TAB. */
 	public static final String TAB = "\t";
+
+	/** The Constant METHOD_FORMAT. */
 	public static final String METHOD_FORMAT = "%s():%n";
+
+	/** The Constant SHOT_FORMAT. */
 	public static final String SHOT_FORMAT = "SHOT #%d: %s%n";
+
+	/** The Constant EXCEPTION_THROWN_FORMAT. */
 	public static final String EXCEPTION_THROWN_FORMAT = "EXCEPTION THROWN: %s%n";
 
+	/** The output stream. */
 	final private OutputStream outputStream;
 
+	/** The thread local string builder. */
 	final private ThreadLocal<StringBuilder> threadLocalStringBuilder = new ThreadLocal<StringBuilder>();
 
+	/** The thread local stack level. */
 	final private ThreadLocal<Integer> threadLocalStackLevel = new ThreadLocal<Integer>();
 
+	/**
+	 * Instantiates a new shot printer tour event listener.
+	 *
+	 * @param outputStream
+	 *            the output stream
+	 */
 	public ShotPrinterTourEventListener(final OutputStream outputStream) {
 		this.outputStream = outputStream;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.diepet.labs.tourist.core.event.TourEventListenerAdapter#
+	 * onTouristTravelStarted(io.diepet.labs.tourist.core.api.Tour)
+	 */
 	@Override
 	public void onTouristTravelStarted(final Tour tour) {
 		final StringBuilder buffer = new StringBuilder();
@@ -34,6 +64,13 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 		buffer.append(String.format(TRAVEL_START_TAG_FORMAT));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.diepet.labs.tourist.core.event.TourEventListenerAdapter#onTourStarted(
+	 * io.diepet.labs.tourist.core.api.Tour)
+	 */
 	@Override
 	public void onTourStarted(final Tour tour) {
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
@@ -44,6 +81,13 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 		this.threadLocalStackLevel.set(Integer.valueOf(stackLevel + 1));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.diepet.labs.tourist.core.event.TourEventListenerAdapter#onTourEnded(io
+	 * .diepet.labs.tourist.core.api.Tour)
+	 */
 	@Override
 	public void onTourEnded(final Tour tour) {
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
@@ -57,6 +101,13 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 		this.threadLocalStackLevel.set(Integer.valueOf(stackLevel - 1));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.diepet.labs.tourist.core.event.TourEventListenerAdapter#onTourFailed(
+	 * io.diepet.labs.tourist.core.api.Tour)
+	 */
 	@Override
 	public void onTourFailed(Tour tour) {
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
@@ -66,6 +117,12 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 		this.threadLocalStackLevel.set(Integer.valueOf(stackLevel - 1));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.diepet.labs.tourist.core.event.TourEventListenerAdapter#
+	 * onTouristTravelEnded(io.diepet.labs.tourist.core.api.Tour)
+	 */
 	@Override
 	public void onTouristTravelEnded(Tour tour) {
 		final StringBuilder buffer = this.threadLocalStringBuilder.get();
@@ -75,6 +132,12 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 		flushBufferToOutputStream(buffer);
 	}
 
+	/**
+	 * Flush buffer to output stream.
+	 *
+	 * @param buffer
+	 *            the buffer
+	 */
 	synchronized private void flushBufferToOutputStream(final StringBuilder buffer) {
 		try {
 			outputStream.write(buffer.toString().getBytes());
@@ -84,6 +147,16 @@ public class ShotPrinterTourEventListener extends TourEventListenerAdapter {
 		}
 	}
 
+	/**
+	 * Repeat string.
+	 *
+	 * @param buffer
+	 *            the buffer where to append the string repeating
+	 * @param s
+	 *            the string to repeat
+	 * @param n
+	 *            how many times the string will be repeated
+	 */
 	private void repeatString(final StringBuilder buffer, String s, int n) {
 		for (int i = 0; i < n; i++) {
 			buffer.append(s);

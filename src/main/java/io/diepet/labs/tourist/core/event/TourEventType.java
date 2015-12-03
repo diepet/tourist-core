@@ -1,7 +1,19 @@
 package io.diepet.labs.tourist.core.event;
 
+/**
+ * The Enum TourEventType.
+ */
 public enum TourEventType {
 
-	TOURIST_TRAVEL_STARTED, TOUR_STARTED, TOUR_ENDED, TOURIST_TRAVEL_ENDED, TOUR_FAILED
+	/** The tourist travel started. */
+	TOURIST_TRAVEL_STARTED,
+	/** The tour started. */
+	TOUR_STARTED,
+	/** The tour ended. */
+	TOUR_ENDED,
+	/** The tourist travel ended. */
+	TOURIST_TRAVEL_ENDED,
+	/** The tour failed. */
+	TOUR_FAILED
 
 }
