@@ -5,10 +5,10 @@
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<bean id="tourist-parent" class="io.diepet.labs.tourist.core.TouristImpl"
+	<bean id="tourist-parent" class="io.tourist.core.TouristImpl"
 		abstract="true">
 		<property name="cameraRollFactory">
-			<bean class="io.diepet.labs.tourist.core.CameraRollFactoryImpl" />
+			<bean class="io.tourist.core.CameraRollFactoryImpl" />
 		</property>
 		<property name="tourEventListenerSet">
 			<set><!-- Inject an empty set -->
