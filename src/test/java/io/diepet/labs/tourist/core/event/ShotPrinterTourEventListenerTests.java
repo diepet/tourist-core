@@ -2,6 +2,7 @@ package io.diepet.labs.tourist.core.event;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockRule;
+import org.easymock.IAnswer;
 import org.easymock.Mock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,6 +58,9 @@ public class ShotPrinterTourEventListenerTests {
 
 	@Mock
 	private Shot thirdShot;
+
+	@Mock
+	private OutputStream outputStream;
 
 	@Before
 	public void setUp() {
@@ -174,5 +179,28 @@ public class ShotPrinterTourEventListenerTests {
 				this.cameraRollDummyMethod, this.proceedingJoinPointInnerDummyMethod, this.signatureInnerDummyMethod,
 				this.tourInnerDummyMethod, this.cameraRollInnerDummyMethod, this.firstShot, this.secondShot,
 				this.thirdShot);
+	}
+
+	@Test
+	public void testOutputStreamIOExceptionNotPropagated() throws IOException {
+		EasyMock.reset(this.outputStream);
+		this.outputStream.write((byte[]) EasyMock.anyObject());
+		EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
+			@Override
+			public Object answer() throws Throwable {
+				throw new IOException("Some IO exception");
+			}
+		});
+		EasyMock.replay(this.outputStream);
+		try {
+			ShotPrinterTourEventListener shotPrinterTourEventListener = new ShotPrinterTourEventListener(
+					this.outputStream);
+			shotPrinterTourEventListener.onTouristTravelStarted(this.tourDummyMethod);
+			shotPrinterTourEventListener.onTourStarted(this.tourDummyMethod);
+			shotPrinterTourEventListener.onTourEnded(this.tourDummyMethod);
+			shotPrinterTourEventListener.onTouristTravelEnded(this.tourDummyMethod);
+		} catch (Throwable exceptionCaught) {
+			Assert.fail("Unexpected exception thrown");
+		}
 	}
 }
