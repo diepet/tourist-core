@@ -51,7 +51,10 @@ public class TouristImpl implements Tourist {
 		Throwable error = null;
 		try {
 			// join point proceed() call
+			long start = System.currentTimeMillis();
 			returnObject = proceedingJoinPoint.proceed();
+			long end = System.currentTimeMillis();
+			tour.setDuration(end - start);
 		} catch (Throwable exceptionCaught) {
 			error = exceptionCaught;
 		} finally {

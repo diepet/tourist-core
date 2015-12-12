@@ -8,10 +8,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
-import io.tourist.core.api.CameraRoll;
-import io.tourist.core.api.CameraRollImpl;
-import io.tourist.core.api.TourImpl;
-
 public class TourTests {
 
 	@Rule
@@ -31,11 +27,13 @@ public class TourTests {
 		tour.setCameraRoll(cameraRoll);
 		tour.setResult(result);
 		tour.setFailCause(e);
+		tour.setDuration(1000l);
 
 		Assert.assertTrue(this.proceedingJoinPoint == tour.getProceedingJoinPoint());
 		Assert.assertTrue(cameraRoll == tour.getCameraRoll());
 		Assert.assertTrue(result == tour.getResult());
 		Assert.assertTrue(e == tour.getFailCause());
+		Assert.assertEquals(1000l, tour.getDuration());
 	}
 
 }

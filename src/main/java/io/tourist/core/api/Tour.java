@@ -34,4 +34,12 @@ public interface Tour {
 	 * @return the camera roll
 	 */
 	CameraRoll getCameraRoll();
+
+	/**
+	 * Gets the tour duration in milliseconds (how long the intercepted method
+	 * was lasted).
+	 *
+	 * @return the duration
+	 */
+	long getDuration();
 }

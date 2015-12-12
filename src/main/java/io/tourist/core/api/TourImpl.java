@@ -19,6 +19,9 @@ final class TourImpl implements Tour {
 	/** The camera roll. */
 	private CameraRoll cameraRoll;
 
+	/** The duration. */
+	private long duration;
+
 	/**
 	 * Instantiates a new tour impl.
 	 *
@@ -98,5 +101,25 @@ final class TourImpl implements Tour {
 	 */
 	void setCameraRoll(final CameraRoll cameraRoll) {
 		this.cameraRoll = cameraRoll;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.tourist.core.api.Tour#getDuration()
+	 */
+	@Override
+	public long getDuration() {
+		return this.duration;
+	}
+
+	/**
+	 * Sets the duration.
+	 *
+	 * @param duration
+	 *            the new duration
+	 */
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 }
