@@ -20,7 +20,6 @@ import org.junit.Test;
 import io.tourist.core.api.CameraRoll;
 import io.tourist.core.api.Shot;
 import io.tourist.core.api.Tour;
-import io.tourist.core.event.ShotPrinterTourEventListener;
 
 public class ShotPrinterTourEventListenerTests {
 
@@ -34,7 +33,7 @@ public class ShotPrinterTourEventListenerTests {
 	private Signature signatureDummyMethod;
 
 	@Mock
-	private Tour tourInnerDummyMethod;
+	private Tour tourDummyMethod;
 
 	@Mock
 	private CameraRoll cameraRollInnerDummyMethod;
@@ -46,7 +45,7 @@ public class ShotPrinterTourEventListenerTests {
 	private Signature signatureInnerDummyMethod;
 
 	@Mock
-	private Tour tourDummyMethod;
+	private Tour tourInnerDummyMethod;
 
 	@Mock
 	private CameraRoll cameraRollDummyMethod;
