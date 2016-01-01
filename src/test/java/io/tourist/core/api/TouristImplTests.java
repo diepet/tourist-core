@@ -2,6 +2,7 @@ package io.tourist.core.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,9 +17,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import io.tourist.core.api.Camera;
-import io.tourist.core.api.CameraRollFactoryImpl;
-import io.tourist.core.api.TouristImpl;
 import io.tourist.core.event.ShotPrinterTourEventListener;
 import io.tourist.core.event.TourEventListener;
 
@@ -44,6 +42,12 @@ public class TouristImplTests {
 	private ShotPrinterTourEventListener shotPrinterTourEventListener;
 
 	private ByteArrayOutputStream baos;
+
+	@Mock
+	private CameraRoll cameraRoll;
+
+	@Mock
+	private CameraRollFactory cameraRollFactory;
 
 	@Before
 	public void setUp() throws Throwable {
@@ -271,6 +275,47 @@ public class TouristImplTests {
 		Assert.assertEquals("\t\tEXCEPTION THROWN: java.lang.NullPointerException", lines[3]);
 		Assert.assertEquals("\tEXCEPTION THROWN: java.lang.NullPointerException", lines[4]);
 		Assert.assertEquals("-- END TRAVEL --", lines[5]);
+
+	}
+
+	@Test
+	public void testNoLockableCameraRoll() throws Throwable {
+
+		EasyMock.reset(this.cameraRoll, this.cameraRollFactory);
+		EasyMock.expect(this.cameraRollFactory.createNewInstance()).andReturn(this.cameraRoll).anyTimes();
+		EasyMock.expect(this.cameraRoll.addShot((Shot) EasyMock.anyObject())).andReturn(Boolean.TRUE).once();
+		EasyMock.expect(this.cameraRoll.getShotList()).andReturn(new ArrayList<Shot>()).once();
+		EasyMock.replay(this.cameraRoll, this.cameraRollFactory);
+
+		// overwrite default camera roll factory set in setUp()
+		this.tourist.setCameraRollFactory(this.cameraRollFactory);
+
+		// configure proceed() mock call
+		EasyMock.expect(this.proceedingJoinPointDummyMethod.proceed()).andAnswer(new IAnswer<Object>() {
+
+			@Override
+			public Object answer() throws Throwable {
+				Camera camera = tourist.getCamera();
+				Assert.assertNotNull(camera);
+				Assert.assertTrue(camera.isOn());
+				camera.shot("Some shot");
+				return null;
+			}
+		}).anyTimes();
+		EasyMock.replay(this.proceedingJoinPointDummyMethod, this.signatureDummyMethod);
+
+		// assert camera is off
+		Camera camera = this.tourist.getCamera();
+		Assert.assertNotNull(camera);
+		Assert.assertFalse(camera.isOn());
+
+		// invoke aroundPointcut in order to start a travel
+		this.tourist.aroundPointcut(this.proceedingJoinPointDummyMethod);
+
+		// assert camera is off after travel completation
+		camera = this.tourist.getCamera();
+		Assert.assertNotNull(camera);
+		Assert.assertFalse(camera.isOn());
 
 	}
 
