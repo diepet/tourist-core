@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 
+import io.tourist.core.condition.Condition;
 import io.tourist.core.event.TourEvent;
 import io.tourist.core.event.TourEventListener;
 import io.tourist.core.event.TourEventType;
@@ -20,6 +21,9 @@ public class TouristImpl implements Tourist {
 	/** The camera roll factory. */
 	private CameraRollFactory cameraRollFactory;
 
+	/** The condition to start a travel. */
+	private Condition condition;
+
 	/** The thread local tour stack. */
 	private ThreadLocal<Stack<Tour>> threadLocalTourStack = new ThreadLocal<Stack<Tour>>();
 
@@ -27,7 +31,8 @@ public class TouristImpl implements Tourist {
 	private ThreadLocal<ConfigurableCamera> threadLocalCamera = new ThreadLocal<ConfigurableCamera>();
 
 	/**
-	 * Around pointcut.
+	 * The conditioned around pointcut: check if a condition is verified before
+	 * starting a new travel.
 	 *
 	 * @param proceedingJoinPoint
 	 *            the proceeding join point
@@ -35,7 +40,35 @@ public class TouristImpl implements Tourist {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public final Object aroundPointcut(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+	public final Object conditionedAroundPointcut(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+		Object returnObject = null;
+		Throwable error = null;
+		final Stack<Tour> tourStack = getThreadLocalTourStack();
+		try {
+			if (!tourStack.isEmpty() || condition.check(proceedingJoinPoint)) {
+				returnObject = defaultAroundPointcut(proceedingJoinPoint);
+			} else {
+				returnObject = proceedingJoinPoint.proceed();
+			}
+		} catch (Throwable e) {
+			error = e;
+		}
+		if (error != null) {
+			throw error;
+		}
+		return returnObject;
+	}
+
+	/**
+	 * The default around pointcut.
+	 *
+	 * @param proceedingJoinPoint
+	 *            the proceeding join point
+	 * @return the object
+	 * @throws Throwable
+	 *             the throwable
+	 */
+	public final Object defaultAroundPointcut(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		final Stack<Tour> tourStack = getThreadLocalTourStack();
 		final ConfigurableCamera camera = getThreadLocalCamera();
 		final CameraRoll cameraRoll = cameraRollFactory.createNewInstance();
@@ -167,6 +200,16 @@ public class TouristImpl implements Tourist {
 	 */
 	public final void setCameraRollFactory(final CameraRollFactory cameraRollFactory) {
 		this.cameraRollFactory = cameraRollFactory;
+	}
+
+	/**
+	 * Sets the condition to start a travel.
+	 *
+	 * @param condition
+	 *            the new condition to start a travel
+	 */
+	public final void setCondition(final Condition condition) {
+		this.condition = condition;
 	}
 
 }

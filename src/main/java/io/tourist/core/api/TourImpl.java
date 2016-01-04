@@ -119,7 +119,7 @@ final class TourImpl implements Tour {
 	 * @param duration
 	 *            the new duration
 	 */
-	public void setDuration(long duration) {
+	public void setDuration(final long duration) {
 		this.duration = duration;
 	}
 }

@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import io.tourist.core.condition.Condition;
 import io.tourist.core.event.ShotPrinterTourEventListener;
 import io.tourist.core.event.TourEventListener;
 
@@ -37,11 +38,8 @@ public class TouristImplTests {
 	@Mock
 	private Signature signatureInnerDummyMethod;
 
-	private TouristImpl tourist;
-
-	private ShotPrinterTourEventListener shotPrinterTourEventListener;
-
-	private ByteArrayOutputStream baos;
+	@Mock
+	private Condition condition;
 
 	@Mock
 	private CameraRoll cameraRoll;
@@ -49,10 +47,17 @@ public class TouristImplTests {
 	@Mock
 	private CameraRollFactory cameraRollFactory;
 
+	private TouristImpl tourist;
+
+	private ShotPrinterTourEventListener shotPrinterTourEventListener;
+
+	private ByteArrayOutputStream baos;
+
 	@Before
 	public void setUp() throws Throwable {
 		tourist = new TouristImpl();
 		tourist.setCameraRollFactory(new CameraRollFactoryImpl());
+		tourist.setCondition(this.condition);
 		Set<TourEventListener> listeners = new LinkedHashSet<TourEventListener>();
 		baos = new ByteArrayOutputStream();
 		shotPrinterTourEventListener = new ShotPrinterTourEventListener(baos);
@@ -62,7 +67,7 @@ public class TouristImplTests {
 		// global mock configuration
 		// configure mocks
 		EasyMock.reset(this.proceedingJoinPointDummyMethod, this.signatureDummyMethod,
-				this.proceedingJoinPointInnerDummyMethod, this.signatureInnerDummyMethod);
+				this.proceedingJoinPointInnerDummyMethod, this.signatureInnerDummyMethod, this.condition);
 
 		EasyMock.expect(this.proceedingJoinPointDummyMethod.getSignature()).andReturn(this.signatureDummyMethod)
 				.anyTimes();
@@ -70,6 +75,9 @@ public class TouristImplTests {
 				.andReturn(this.signatureInnerDummyMethod).anyTimes();
 		EasyMock.expect(this.signatureDummyMethod.getName()).andReturn("dummyMethod").anyTimes();
 		EasyMock.expect(this.signatureInnerDummyMethod.getName()).andReturn("innerDummyMethod").anyTimes();
+		EasyMock.expect(this.condition.check((ProceedingJoinPoint) EasyMock.anyObject())).andReturn(Boolean.TRUE)
+				.anyTimes();
+		EasyMock.replay(this.condition);
 	}
 
 	@Test
@@ -95,7 +103,7 @@ public class TouristImplTests {
 		Assert.assertFalse(camera.isOn());
 
 		// invoke aroundPointcut in order to start a travel
-		this.tourist.aroundPointcut(this.proceedingJoinPointDummyMethod);
+		this.tourist.conditionedAroundPointcut(this.proceedingJoinPointDummyMethod);
 
 		// assert camera is off after travel completation
 		camera = this.tourist.getCamera();
@@ -124,7 +132,7 @@ public class TouristImplTests {
 				Assert.assertNotNull(camera);
 				Assert.assertTrue(camera.isOn());
 				camera.shot("First shot");
-				tourist.aroundPointcut(proceedingJoinPointInnerDummyMethod);
+				tourist.conditionedAroundPointcut(proceedingJoinPointInnerDummyMethod);
 				camera.shot("Third shot");
 				return null;
 			}
@@ -150,7 +158,7 @@ public class TouristImplTests {
 		Assert.assertFalse(camera.isOn());
 
 		// invoke aroundPointcut in order to start a travel
-		this.tourist.aroundPointcut(this.proceedingJoinPointDummyMethod);
+		this.tourist.conditionedAroundPointcut(this.proceedingJoinPointDummyMethod);
 
 		// assert camera is off after travel completation
 		camera = this.tourist.getCamera();
@@ -194,7 +202,7 @@ public class TouristImplTests {
 
 		// invoke aroundPointcut in order to start a travel that will fail
 		try {
-			this.tourist.aroundPointcut(this.proceedingJoinPointDummyMethod);
+			this.tourist.conditionedAroundPointcut(this.proceedingJoinPointDummyMethod);
 			Assert.fail("Previous method call should raise an IOException");
 		} catch (Throwable e) {
 			Assert.assertTrue(e instanceof IOException);
@@ -228,7 +236,7 @@ public class TouristImplTests {
 				Assert.assertNotNull(camera);
 				Assert.assertTrue(camera.isOn());
 				camera.shot("First shot");
-				tourist.aroundPointcut(proceedingJoinPointInnerDummyMethod);
+				tourist.conditionedAroundPointcut(proceedingJoinPointInnerDummyMethod);
 				camera.shot("Third shot");
 				return null;
 			}
@@ -255,7 +263,7 @@ public class TouristImplTests {
 
 		// invoke aroundPointcut in order to start a travel that will fail
 		try {
-			this.tourist.aroundPointcut(this.proceedingJoinPointDummyMethod);
+			this.tourist.conditionedAroundPointcut(this.proceedingJoinPointDummyMethod);
 			Assert.fail("Previous method call should raise a NullPointerException");
 		} catch (Throwable e) {
 			Assert.assertTrue(e instanceof NullPointerException);
@@ -310,12 +318,55 @@ public class TouristImplTests {
 		Assert.assertFalse(camera.isOn());
 
 		// invoke aroundPointcut in order to start a travel
-		this.tourist.aroundPointcut(this.proceedingJoinPointDummyMethod);
+		this.tourist.conditionedAroundPointcut(this.proceedingJoinPointDummyMethod);
 
 		// assert camera is off after travel completation
 		camera = this.tourist.getCamera();
 		Assert.assertNotNull(camera);
 		Assert.assertFalse(camera.isOn());
+
+	}
+
+	@Test
+	public void testSingleProceedCallConditioned() throws Throwable {
+
+		// configure proceed() mock call
+		EasyMock.expect(this.proceedingJoinPointDummyMethod.proceed()).andAnswer(new IAnswer<Object>() {
+
+			@Override
+			public Object answer() throws Throwable {
+				Camera camera = tourist.getCamera();
+				Assert.assertNotNull(camera);
+				Assert.assertFalse(camera.isOn());
+				camera.shot("Some shot");
+				return null;
+			}
+		}).anyTimes();
+		EasyMock.replay(this.proceedingJoinPointDummyMethod, this.signatureDummyMethod);
+
+		// change condition mock setted up before in setUp()
+		EasyMock.reset(this.condition);
+		EasyMock.expect(this.condition.check((ProceedingJoinPoint) EasyMock.anyObject())).andReturn(Boolean.FALSE)
+				.anyTimes();
+		EasyMock.replay(this.condition);
+
+		// assert camera is off
+		Camera camera = this.tourist.getCamera();
+		Assert.assertNotNull(camera);
+		Assert.assertFalse(camera.isOn());
+
+		// invoke aroundPointcut in order to start a travel
+		this.tourist.conditionedAroundPointcut(this.proceedingJoinPointDummyMethod);
+
+		// assert camera is off after travel completation
+		camera = this.tourist.getCamera();
+		Assert.assertNotNull(camera);
+		Assert.assertFalse(camera.isOn());
+
+		// travel assertions
+		String[] lines = baos.toString().split(String.format("%n"));
+		Assert.assertEquals(1, lines.length);
+		Assert.assertEquals("", lines[0]);
 
 	}
 
