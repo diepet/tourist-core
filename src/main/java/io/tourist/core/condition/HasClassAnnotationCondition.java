@@ -12,16 +12,33 @@ public final class HasClassAnnotationCondition implements Condition {
 	@SuppressWarnings("rawtypes")
 	private Class clazz;
 
+	/** The deep search interfaces flag. */
+	private boolean deepSearchInterfaces;
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see io.tourist.core.condition.Condition#check(org.aspectj.lang.
 	 * ProceedingJoinPoint)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public boolean check(final ProceedingJoinPoint proceedingJoinPoint) {
-		return proceedingJoinPoint.getTarget().getClass().isAnnotationPresent(clazz);
+
+		boolean result = false;
+		Class targetClass = proceedingJoinPoint.getTarget().getClass();
+		if (targetClass.isAnnotationPresent(this.clazz)) {
+			result = true;
+		} else if (this.deepSearchInterfaces) {
+			Class[] interfaces = targetClass.getInterfaces();
+			for (Class i : interfaces) {
+				if (i.isAnnotationPresent(this.clazz)) {
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -34,4 +51,14 @@ public final class HasClassAnnotationCondition implements Condition {
 		this.clazz = clazz;
 	}
 
+	/**
+	 * Sets the deep search interfaces flag: if true, the annotation will be
+	 * searched in the implemented interfaces too.
+	 *
+	 * @param deepSearchInterfaces
+	 *            the new deep search interfaces flag
+	 */
+	public void setDeepSearchInterfaces(final boolean deepSearchInterfaces) {
+		this.deepSearchInterfaces = deepSearchInterfaces;
+	}
 }

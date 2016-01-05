@@ -45,6 +45,32 @@ public class HasClassAnnotationConditionTests {
 		Assert.assertFalse(condition.check(this.proceedingJoinPointDummyMethod));
 	}
 
+	@Test
+	public void testDeepSearchInterfacesSuccess() {
+		final ImplementingAnnotatedInterface instance = new ImplementingAnnotatedInterface();
+		EasyMock.reset(this.proceedingJoinPointDummyMethod);
+		EasyMock.expect(this.proceedingJoinPointDummyMethod.getTarget()).andReturn(instance).anyTimes();
+		EasyMock.replay(this.proceedingJoinPointDummyMethod);
+
+		HasClassAnnotationCondition condition = new HasClassAnnotationCondition();
+		condition.setClazz(DummyAnnotation.class);
+		condition.setDeepSearchInterfaces(true);
+		Assert.assertTrue(condition.check(this.proceedingJoinPointDummyMethod));
+	}
+
+	@Test
+	public void testDeepSearchInterfacesFailure() {
+		final ImplementingNotAnnotatedInterface instance = new ImplementingNotAnnotatedInterface();
+		EasyMock.reset(this.proceedingJoinPointDummyMethod);
+		EasyMock.expect(this.proceedingJoinPointDummyMethod.getTarget()).andReturn(instance).anyTimes();
+		EasyMock.replay(this.proceedingJoinPointDummyMethod);
+
+		HasClassAnnotationCondition condition = new HasClassAnnotationCondition();
+		condition.setClazz(DummyAnnotation.class);
+		condition.setDeepSearchInterfaces(true);
+		Assert.assertFalse(condition.check(this.proceedingJoinPointDummyMethod));
+	}
+
 	@Target(ElementType.TYPE)
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface DummyAnnotation {
@@ -57,6 +83,23 @@ public class HasClassAnnotationConditionTests {
 	}
 
 	class NotAnnotatedClass {
+
+	}
+
+	@DummyAnnotation
+	interface AnnotatedInterface {
+
+	}
+
+	interface NotAnnotatedInterface {
+
+	}
+
+	class ImplementingAnnotatedInterface implements AnnotatedInterface {
+
+	}
+
+	class ImplementingNotAnnotatedInterface implements NotAnnotatedInterface {
 
 	}
 
