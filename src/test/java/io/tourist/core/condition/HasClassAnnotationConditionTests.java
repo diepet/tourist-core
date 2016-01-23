@@ -29,7 +29,7 @@ public class HasClassAnnotationConditionTests {
 		EasyMock.replay(this.proceedingJoinPointDummyMethod);
 
 		HasClassAnnotationCondition condition = new HasClassAnnotationCondition();
-		condition.setClazz(DummyAnnotation.class);
+		condition.setClazz("io.tourist.core.condition.DummyAnnotation");
 		Assert.assertTrue(condition.check(this.proceedingJoinPointDummyMethod));
 	}
 
@@ -41,7 +41,7 @@ public class HasClassAnnotationConditionTests {
 		EasyMock.replay(this.proceedingJoinPointDummyMethod);
 
 		HasClassAnnotationCondition condition = new HasClassAnnotationCondition();
-		condition.setClazz(DummyAnnotation.class);
+		condition.setClazz("io.tourist.core.condition.DummyAnnotation");
 		Assert.assertFalse(condition.check(this.proceedingJoinPointDummyMethod));
 	}
 
@@ -53,7 +53,7 @@ public class HasClassAnnotationConditionTests {
 		EasyMock.replay(this.proceedingJoinPointDummyMethod);
 
 		HasClassAnnotationCondition condition = new HasClassAnnotationCondition();
-		condition.setClazz(DummyAnnotation.class);
+		condition.setClazz("io.tourist.core.condition.DummyAnnotation");
 		condition.setDeepSearchInterfaces(true);
 		Assert.assertTrue(condition.check(this.proceedingJoinPointDummyMethod));
 	}
@@ -66,41 +66,41 @@ public class HasClassAnnotationConditionTests {
 		EasyMock.replay(this.proceedingJoinPointDummyMethod);
 
 		HasClassAnnotationCondition condition = new HasClassAnnotationCondition();
-		condition.setClazz(DummyAnnotation.class);
+		condition.setClazz("io.tourist.core.condition.DummyAnnotation");
 		condition.setDeepSearchInterfaces(true);
 		Assert.assertFalse(condition.check(this.proceedingJoinPointDummyMethod));
 	}
 
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface DummyAnnotation {
+}
 
-	}
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@interface DummyAnnotation {
 
-	@DummyAnnotation
-	class AnnotatedClass {
+}
 
-	}
+@DummyAnnotation
+class AnnotatedClass {
 
-	class NotAnnotatedClass {
+}
 
-	}
+class NotAnnotatedClass {
 
-	@DummyAnnotation
-	interface AnnotatedInterface {
+}
 
-	}
+@DummyAnnotation
+interface AnnotatedInterface {
 
-	interface NotAnnotatedInterface {
+}
 
-	}
+interface NotAnnotatedInterface {
 
-	class ImplementingAnnotatedInterface implements AnnotatedInterface {
+}
 
-	}
+class ImplementingAnnotatedInterface implements AnnotatedInterface {
 
-	class ImplementingNotAnnotatedInterface implements NotAnnotatedInterface {
+}
 
-	}
+class ImplementingNotAnnotatedInterface implements NotAnnotatedInterface {
 
 }

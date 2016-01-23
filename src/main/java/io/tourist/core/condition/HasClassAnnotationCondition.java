@@ -1,5 +1,7 @@
 package io.tourist.core.condition;
 
+import java.lang.annotation.Annotation;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
@@ -9,8 +11,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 public final class HasClassAnnotationCondition implements Condition {
 
 	/** The annotation class. */
-	@SuppressWarnings("rawtypes")
-	private Class clazz;
+	private String clazz;
 
 	/** The deep search interfaces flag. */
 	private boolean deepSearchInterfaces;
@@ -21,18 +22,18 @@ public final class HasClassAnnotationCondition implements Condition {
 	 * @see io.tourist.core.condition.Condition#check(org.aspectj.lang.
 	 * ProceedingJoinPoint)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public boolean check(final ProceedingJoinPoint proceedingJoinPoint) {
 
 		boolean result = false;
 		Class targetClass = proceedingJoinPoint.getTarget().getClass();
-		if (targetClass.isAnnotationPresent(this.clazz)) {
+		if (isAnnotationPresent(targetClass)) {
 			result = true;
 		} else if (this.deepSearchInterfaces) {
 			Class[] interfaces = targetClass.getInterfaces();
 			for (Class i : interfaces) {
-				if (i.isAnnotationPresent(this.clazz)) {
+				if (isAnnotationPresent(i)) {
 					result = true;
 					break;
 				}
@@ -47,7 +48,7 @@ public final class HasClassAnnotationCondition implements Condition {
 	 * @param clazz
 	 *            the new clazz
 	 */
-	public void setClazz(@SuppressWarnings("rawtypes") final Class clazz) {
+	public void setClazz(final String clazz) {
 		this.clazz = clazz;
 	}
 
@@ -61,4 +62,24 @@ public final class HasClassAnnotationCondition implements Condition {
 	public void setDeepSearchInterfaces(final boolean deepSearchInterfaces) {
 		this.deepSearchInterfaces = deepSearchInterfaces;
 	}
+
+	/**
+	 * Checks if is annotation present.
+	 *
+	 * @param someClass
+	 *            the some class
+	 * @return true, if is annotation present
+	 */
+	private boolean isAnnotationPresent(@SuppressWarnings("rawtypes") Class someClass) {
+		boolean result = false;
+		Annotation[] annotations = someClass.getAnnotations();
+		for (Annotation annotation : annotations) {
+			if (this.clazz.equals(annotation.annotationType().getName())) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
 }
